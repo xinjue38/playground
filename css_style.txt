@@ -1,0 +1,59 @@
+<style>
+[data-testid=stSidebar] {background-color: #000000; } /* Change sidebar background color*/
+[data-testid=stSidebar] div {cursor: auto; } /* Change sidebar background color*/
+[data-testid=stHeader]{display:none}  /* Hide Header */
+.css-1b9x38r{display:none;} /* Hide x in the sidebar*/ 
+[data-testid="stSidebar"][aria-expanded="true"]{
+           min-width: 340px;
+           max-width: 340px;
+       }
+footer {display:none;}    /* Hide footer*/
+#root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 1rem;}  /* Remove Top Margin */
+
+/* CSS for button */
+.button {
+    background-color: #8c66ff; 
+    border: none;
+    border-radius: 10%;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    padding: 20px;
+    transition-duration: 0.4s;
+    opacity: 1;
+    cursor: pointer;
+    width: 100%;
+    margin: 5px;
+    float: left;
+    }
+
+.button:hover {
+    background-color: #6632ff;
+    color:yellow;
+    opacity: 0.9;
+}
+.button:active {
+    transform: translateY(5%);
+}
+
+.button span:after {
+  content: '➜';
+  position: absolute;
+  opacity: 0;
+  top: 20%;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+</style>
