@@ -3,6 +3,7 @@ base="dark"
 
 [server]
 maxUploadSize = 30
+enableStaticServing = true
 
 [client]
 toolbarMode = "minimal"
