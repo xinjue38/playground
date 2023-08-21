@@ -3,3 +3,10 @@ base="dark"
 
 [server]
 maxUploadSize = 30
+
+[client]
+toolbarMode = "minimal"
+showErrorDetails = false
+
+[browser]
+gatherUsageStats = false
