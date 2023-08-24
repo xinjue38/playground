@@ -34,6 +34,7 @@ with st.sidebar:
                          ("Use your own API key", "Use platform API key (need paid)"))
     
     if selection == "Use your own API key":
+        st.session_state.openai_api = ""
         st.text_input('Enter OpenAI API key:', 
                       type='password', 
                       key="openai_api",
@@ -67,9 +68,9 @@ with st.sidebar:
     st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
     
     expander = st.expander("Advanced Settings")
-    show_template     = expander.checkbox("Show Prompt Template")
-    temperature       = expander.slider('temperature', min_value=0.0,  max_value=2.0, value=0.7, step=0.01)
-    max_length        = expander.slider('max_tokens', min_value=128,   max_value=st.session_state.MAX_TOKEN, value=512, step=64)
+    expander.checkbox("Show Prompt Template", key="show_template")
+    expander.slider('temperature', min_value=0.0,  max_value=2.0, value=0.7, step=0.01, key="temperature")
+    expander.slider('max_tokens', min_value=128,   max_value=st.session_state.MAX_TOKEN, value=512, step=64,key="max_length")
     expander.markdown('📖 [Learn more about parameter](https://platform.openai.com/docs/api-reference/chat/create)')
     expander.markdown("🔑 [Way to get OpenAI API key](https://platform.openai.com/account/api-keys)")
 
@@ -94,8 +95,8 @@ MAX_WINDOW_ALLOW = 30
 
 ## 4.1 Define an LLM
 llm = ChatOpenAI(model_name = st.session_state.model,
-                 temperature=temperature, 
-                 max_tokens =max_length,    
+                 temperature=st.session_state.temperature, 
+                 max_tokens =st.session_state.max_length,    
                  openai_api_key=st.session_state.openai_api)
 
 ### 4.2, 4.3, 4.4 only need run for onces as we cannot initialize memory for many time, memory will loss
@@ -126,9 +127,9 @@ conversation = LLMChain(llm=llm,
 
 ## 4.6 Function to generate response from the prompt
 def generate_response(prompt_input):
-    return {"text":"Debug"}
+    # return {"text":"Debug"}
     with get_openai_callback() as cb:
-        response = conversation(inputs ={"human_input":prompt_input}, return_only_outputs = not show_template)
+        response = conversation(inputs ={"human_input":prompt_input}, return_only_outputs = not st.session_state.show_template)
         st.session_state.total_token_used += cb.total_tokens
     return response
 
@@ -168,7 +169,7 @@ if len(st.session_state.messages) > MAX_WINDOW_ALLOW*2:
 if prompt := st.chat_input(disabled=DISABLE_CHAT, max_chars = st.session_state.MAX_TOKEN*4):
     if len(st.session_state.messages) <= MAX_WINDOW_ALLOW*2:
         # If not show template, show the input text first
-        if not show_template:
+        if not st.session_state.show_template:
             st.session_state.messages.append({"role": "user", "content": prompt})
             with st.chat_message("user"):
                 st.text(prompt)
@@ -177,7 +178,7 @@ if prompt := st.chat_input(disabled=DISABLE_CHAT, max_chars = st.session_state.M
             response = generate_response(prompt)
         
         # If show template, show the input text after "Thinking"
-        if show_template:
+        if st.session_state.show_template:
             prompt = st.session_state.prompts.format(chat_history=response["chat_history"], human_input=response["human_input"])
             print("Current prompt",prompt)
             st.session_state.messages.append({"role": "user", "content": prompt})
